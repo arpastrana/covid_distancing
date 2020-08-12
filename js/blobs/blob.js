@@ -7,7 +7,7 @@ class Blob {
     this.r = r;  // 120, 240
     this.id = id;
   
-    let max_vel = 3.0;
+    let max_vel = 1.5;
     let angle = random(0, 2 * PI);  // (0, 2 * PI)
     this.xvel = random(1, max_vel) * Math.cos(angle);
     this.yvel = random(1, max_vel) * Math.sin(angle);
@@ -18,7 +18,7 @@ class Blob {
 
   show() {
     noFill();
-    stroke(0);  // 0
+    noStroke(0);  // 0
     strokeWeight(0.1);  // 4
     ellipse(this.x, this.y, this.r * 2, this.r * 2);
   }
@@ -97,11 +97,21 @@ class Blob {
     return false;
   }
 
-
+ 
   intersects_wall(wall){
     if (this.intersects_wall_on_x(wall) && this.intersects_wall_on_y(wall)){
-      this.xvel *= -1;
-      this.yvel *= -1;
+      // left, right edges
+      if (this.x <= wall.x - wall.half_w ||
+          this.x >= wall.x + wall.half_w)
+          {
+          this.xvel *= -1;
+          } 
+      // top, bottom edges
+      else if (this.y <= wall.y - wall.half_h || 
+               this.y >= wall.y + wall.half_h)
+               {
+               this.yvel *= -1;
+               } 
     }
   }
 
@@ -111,6 +121,4 @@ class Blob {
       this.intersects_wall(walls[k]);
       }
     }
-
 }
-

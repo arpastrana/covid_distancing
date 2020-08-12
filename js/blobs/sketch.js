@@ -6,23 +6,24 @@ function setup() {
   let width = 400;
   let height = 200;
   let walls_t = 20;
-  let num_blobs = 5;
+  let num_blobs = 4;
   let blob_radius = 10.0;
 
   createCanvas(width, height);
 
   // create blobs
   for (i = 0; i < num_blobs; i++){
-    var radius = blob_radius + random(0.0, 0.5);
-    var x = random(radius, width - radius);
-    var y = random(radius, height - radius);    
+    var radius = blob_radius + random(0.0, 2.0);
+    var x = random(5 * width / 6.0, width - 2 * radius);
+    var y = random(radius, height - 2 * radius);    
     blobs.push(new Blob(x, y, radius, i));
   }
 
   // create walls  
   walls.push(new Wall(width / 3.0,  1 * height / 3.0, width / 3.0, walls_t));
   walls.push(new Wall(width / 3.0,  2 * height / 3.0, width / 3.0, walls_t));
-  walls.push(new Wall(4.5 * width / 6.0,  height / 2.0, walls_t, (height - walls_t) / 2.0));
+  walls.push(new Wall(4.5 * width / 6.0,  height / 2.0, walls_t, (height -
+  walls_t) / 2.0));
 
 }
 
@@ -35,12 +36,11 @@ function draw() {
 
 
 function updateBlobs(blobs, walls){
-  // blob operations
   for (i = 0; i < blobs.length; i++) {
-    blobs[i].update();
-    blobs[i].intersect_boundary();
     blobs[i].intersect_walls(walls);
     blobs[i].intersect_blobs(blobs);
+    blobs[i].intersect_boundary();
+    blobs[i].update();
     
   }
 }
@@ -55,8 +55,13 @@ function showWalls(walls){
 
 function colorPixels(){
   loadPixels();
-
   // colorize screen
+  colorBlobs();
+  updatePixels();
+}
+
+
+function colorBlobs(){
   for (x = 0; x < width; x++) {
 
     for (y = 0; y < height; y++) {
@@ -85,14 +90,10 @@ function colorPixels(){
       // else{
       //   sum = sum * sum / 2
       // }
-      sum *= 2
 
       set(x, y, color(sum * 255, sum * 255, sum * 255)); 
       // set(x, y, color(sum * 255, 255, 255));
       // set(x, y, color(sum * 255, sum , sum));  // set(x, y, color
     }
-
   }
-
-  updatePixels();
 }

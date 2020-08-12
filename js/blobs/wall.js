@@ -16,8 +16,6 @@ class Wall {
     noFill();
     stroke(255);  // 0
     strokeWeight(0.5);  // 4
-    //fill(255);
-    //stroke(0);
     rect(this.x, this.y, this.w, this.h);
   }
  
