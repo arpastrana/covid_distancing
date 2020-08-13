@@ -7,13 +7,13 @@ function setup() {
   let height = 200;
   let walls_t = 20;
   let num_blobs = 4;
-  let blob_radius = 10.0;
+  let blob_radius = 8.0;
 
   createCanvas(width, height);
 
   // create blobs
   for (i = 0; i < num_blobs; i++){
-    var radius = blob_radius + random(0.0, 2.0);
+    var radius = blob_radius + random(0.0, 3.0);
     var x = random(5 * width / 6.0, width - 2 * radius);
     var y = random(radius, height - 2 * radius);    
     blobs.push(new Blob(x, y, radius, i));
@@ -24,6 +24,8 @@ function setup() {
   walls.push(new Wall(width / 3.0,  2 * height / 3.0, width / 3.0, walls_t));
   walls.push(new Wall(4.5 * width / 6.0,  height / 2.0, walls_t, (height -
   walls_t) / 2.0));
+
+  // colorVoronoi();
 
 }
 
@@ -56,8 +58,91 @@ function showWalls(walls){
 function colorPixels(){
   loadPixels();
   // colorize screen
-  colorBlobs();
+  
+  // colorBlobs();
+  colorVoronoi();
   updatePixels();
+}
+
+
+function colorVoronoi(){
+
+  for (x = 0; x < width; x++) {
+
+    for (y = 0; y < height; y++) {
+
+      var min_dist = float("Infinity");
+      var closest = -1;
+
+      for (i = 0; i < blobs.length; i++) {
+
+        let dx = x - blobs[i].x;
+        let dy = y - blobs[i].y;
+        let d = (dx * dx + dy * dy)
+
+        if (d < min_dist){
+          min_dist = d;
+          closest = i;
+        }
+      }
+
+      let c = blobs[closest].color
+      set(x, y, color(c[0] * 255, c[1] * 255, c[2] * 255, 0.5 * 255));
+    }
+  }
+}
+
+
+function colorVoronoiGradient(){
+  var blobsDist = []
+  for (i = 0; i < blobs.length; i++) {
+    blobsDist.push({})
+  }
+
+  for (x = 0; x < width; x++) {
+
+    for (y = 0; y < height; y++) {
+
+      var min_dist = float("Infinity");
+      var closest = -1;
+
+      for (i = 0; i < blobs.length; i++) {
+
+        let dx = x - blobs[i].x;
+        let dy = y - blobs[i].y;
+        let d = (dx * dx + dy * dy)
+
+        if (d < min_dist){
+          min_dist = d;
+          closest = i;
+        }
+      
+      blobsDist[closest][[x, y].toString()] = min_dist;
+      }
+    }
+  }
+
+  for (i = 0; i < blobs.length; i++){
+    
+    let blobDict = blobsDist[i];
+    let c = blobs[i].color;
+
+    let keys = Object.keys(blobDict);
+    let values = Object.values(blobDict);
+    let min_d = min(values);
+    let max_d = max(values) - min_d;
+
+    for (j = 0; j < values.length; j++){
+      let a = keys[j];
+      let clos_d = blobDict[a];
+      let light = (clos_d - min_d) / max_d
+
+      light = 1 - light * light
+      a = a.split(",")
+      
+      set(a[0], a[1], color(c[0] * 255, c[1] * 255, c[2] * 255, light * 255)); 
+    }
+  }
 }
 
 

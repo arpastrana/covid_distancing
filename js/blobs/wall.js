@@ -14,7 +14,7 @@ class Wall {
   show() {
     rectMode(CENTER);
     noFill();
-    stroke(255);  // 0
+    // stroke(255);  // 0
     strokeWeight(0.5);  // 4
     rect(this.x, this.y, this.w, this.h);
   }
