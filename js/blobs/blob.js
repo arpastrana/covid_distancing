@@ -7,7 +7,7 @@ class Blob {
     this.r = r;  // 120, 240
     this.id = id;
   
-    let max_vel = 3.0;
+    let max_vel = 2.0;
     let angle = random(0, 2 * PI);  // (0, 2 * PI)
     this.xvel = random(1, max_vel) * Math.cos(angle);
     this.yvel = random(1, max_vel) * Math.sin(angle);
@@ -18,8 +18,9 @@ class Blob {
 
   show() {
     noFill();
-    stroke(0);  // 0
-    strokeWeight(0.5);  // 4
+    noStroke();
+    // stroke(0);  // 0
+    // strokeWeight(0.5);  // 4
     ellipse(this.x, this.y, this.r * 2, this.r * 2);
   }
 

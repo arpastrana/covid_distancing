@@ -7,13 +7,13 @@ function setup() {
   let height = 200;
   let walls_t = 20;
   let num_blobs = 4;
-  let blob_radius = 8.0;
+  let blob_radius = 10.0;
 
   createCanvas(width, height);
 
   // create blobs
   for (i = 0; i < num_blobs; i++){
-    var radius = blob_radius + random(0.0, 3.0);
+    var radius = blob_radius + random(0.0, 2.0);
     var x = random(5 * width / 6.0, width - 2 * radius);
     var y = random(radius, height - 2 * radius);    
     blobs.push(new Blob(x, y, radius, i));
@@ -24,8 +24,6 @@ function setup() {
   walls.push(new Wall(width / 3.0,  2 * height / 3.0, width / 3.0, walls_t));
   walls.push(new Wall(4.5 * width / 6.0,  height / 2.0, walls_t, (height -
   walls_t) / 2.0));
-
-  // colorVoronoi();
 
 }
 
@@ -58,9 +56,8 @@ function showWalls(walls){
 function colorPixels(){
   loadPixels();
   // colorize screen
-  
-  // colorBlobs();
-  colorVoronoi();
+  colorBlobs();
+  // colorVoronoi();
   updatePixels();
 }
 
@@ -152,33 +149,37 @@ function colorBlobs(){
     for (y = 0; y < height; y++) {
 
       let sum = 0;
+      var screen = [0.0, 0.0, 0.0];
       
       for (i = 0; i < blobs.length; i++) {
 
         let dx = x - blobs[i].x;
         let dy = y - blobs[i].y;
         let light = blobs[i].r * blobs[i].r / (dx * dx + dy * dy);
-
-        // let d = sqrt(dx * dx + dy * dy);
-        // sum += (scale * blobs[i].r) / d;
   
-        // var screen = [];
-        // for (c = 0; c < 3; c++){
-        //   screen[c] = blobs[i].color[c] * 255 * light;
-        // }
-        sum += light;
+        for (c = 0; c < 3; c++){
+          screen[c] += blobs[i].color[c] * light * 255.0;
+        }
+
+        // this works nicely for bw
+        // sum += light;
+      }
+      
+
+      let max_color = max(screen);
+
+      if (max_color > 255.0){
+        for (let k = 0; k < screen.length; k++){
+          screen[k] = screen[k] *  255.0 / max_color;
+        }
+      }
+      else {
+        for (let k = 0; k < screen.length; k++){
+          screen[k] = screen[k] * screen[k] / max_color;
+        }
       }
 
-      // if (sum > 1.0){
-      //   sum = 1.0;
-      // }
-      // else{
-      //   sum = sum * sum / 2
-      // }
-
-      set(x, y, color(sum * 255, sum * 255, sum * 255)); 
-      // set(x, y, color(sum * 255, 255, 255));
-      // set(x, y, color(sum * 255, sum , sum));  // set(x, y, color
+      set(x, y, color(screen[0], screen[1], screen[2]));
+    }
     }
   }
-}
