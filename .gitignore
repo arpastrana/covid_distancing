@@ -1,3 +1,16 @@
+# third-party packages
 cromosim/
-.DS_Store
+
+# cache
+__pycache__/
+
+# videos
+*.mp4
+*.avi
+
+# yolo stuff
+*.names
+*.cfg
+*.weights
+
 
